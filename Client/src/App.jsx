@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import TaskList from "./Component/TaskList";
+import TaskForm from "./Component/TaskForm";
+import axios from "axios";
 
-function App() {
-  const [count, setCount] = useState(0)
+function App(){
+    const [tasks, setTasks] = useState([]);
+    const fetchTasks = async () => {
+        const response = await axios.get("http://localhost:3000/api/tasks");
+       
+        // Establece el estado de las tareas con los datos obtenidos
+        setTasks(response.data)
+    };
+    // Carga inicial de tareas    
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    useEffect(() => {
+        fetchTasks();
+    }, []);
+
+    const handleTaskCreated = () => {
+        fetchTasks();
+    };
+
+    // Eliminación de tareas
+    const handleTaskDeleted = async (id) => {
+        await axios.delete(`http://localhost:3000/api/tasks/${id}`);
+        fetchTasks();
+    };
+    // Actualización de tareas
+    const handleTaskUpdated = async (id, updatedTask) => {
+        await axios.put(`http://localhost:3000/api/tasks/${id}`, updatedTask);
+        fetchTasks();
+    };
+    // Completado de tareas
+    const handleTaskCompleted = async (id) => {
+        await axios.patch(`http://localhost:3000/api/tasks/${id}`);
+        fetchTasks();
+    };
+    // Filtrado de tareas
+    const handleTaskFiltered = async (filter) => {
+        const response = await axios.get(`http://localhost:3000/api/tasks?completed=${filter}`);
+        setTasks(response.data);
+    };
+    // Ordenación de tareas     
+
+    return (
+        <div className="container mt-5">
+            <h1 className="text-center">Administrador de Tareas</h1>
+            <p className="text-center">Gestionas tus tareas de forma eficiente</p>
+            <hr />
+            <h2 className="text-center">Crea una nueva tarea</h2>
+            <TaskForm onTaskCreated={handleTaskCreated} />
+            <TaskList tasks={tasks} onTaskDeleted={handleTaskDeleted} />
+        </div>
+    );
 }
 
-export default App
+export default App;
