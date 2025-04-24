@@ -32,7 +32,20 @@ function App(){
         fetchTasks();
     };
     // Completado de tareas
-    const handleTaskCompleted = async (id) => {
+    const handleTaskCompleted = async (id, currentCompleted) => {
+        try{
+            const updatedCompleted = !currentCompleted;
+            await axios.patch(`http://localhost:3000/api/tasks/${id}`, {
+                completed: updatedCompleted,
+            });
+            fetchTasks();
+        }catch (error) {
+            console.error("Error al actualizar la tarea:", error);
+        }
+       
+    }
+    // Actualización de tareas
+    const handleTaskUpdate = async (id) => {
         await axios.patch(`http://localhost:3000/api/tasks/${id}`);
         fetchTasks();
     };
@@ -50,7 +63,7 @@ function App(){
             <hr />
             <h2 className="text-center">Crea una nueva tarea</h2>
             <TaskForm onTaskCreated={handleTaskCreated} />
-            <TaskList tasks={tasks} onTaskDeleted={handleTaskDeleted} />
+            <TaskList tasks={tasks} onTaskDeleted={handleTaskDeleted} onTaskCompleted={handleTaskCompleted}/>
         </div>
     );
 }

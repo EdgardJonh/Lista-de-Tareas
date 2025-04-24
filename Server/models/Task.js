@@ -58,9 +58,19 @@ const deleteTask = async (id) => {
         console.error(error.message);
     }
 }
+//actualiza una tarea a completada
+const updateTask = async (id) => {
+    try {
+        const result = await pool.query('UPDATE tasks SET completed = true WHERE id = $1 RETURNING *', [id]);
+        return result.rows[0];
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 module.exports = {
     getAllTasks,
     getTask,
     createTask, 
-    deleteTask
+    deleteTask,
+    updateTask
 };

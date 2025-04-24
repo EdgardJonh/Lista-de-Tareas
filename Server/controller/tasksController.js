@@ -58,11 +58,23 @@ const deletesTask = async (req, res) => {
         res.status(500).json({ message: 'Error deleting task', error });
     }
 };
-
+//actualiza una tarea a completada
+const completeTask = async (req, res) => {
+    try {
+        const completedTask = await Task.updateTask(req.params.id);
+        if (!completedTask) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        res.status(200).json(completedTask);
+    } catch (error) {
+        res.status(500).json({ message: 'Error completing task', error });
+    }
+};
 module.exports = {
     getAllTasks,
     getTaskById,
     createTask,
     updateTask,
-    deletesTask
+    deletesTask,
+    completeTask
 };

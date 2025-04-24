@@ -9,5 +9,7 @@ router.get('/', tasksController.getAllTasks);
 router.post('/', tasksController.createTask);
 // elimina una tarea por su id
 router.delete('/:id', tasksController.deletesTask);
+//actualiza una tarea completada
+router.patch('/:id', tasksController.completeTask);
 
 module.exports = router;
